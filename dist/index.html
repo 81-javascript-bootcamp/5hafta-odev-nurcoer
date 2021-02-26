@@ -46,20 +46,20 @@
             <input type="text" class="form-control"  placeholder="Task Title">
         </div>
         <div class="col-auto">
-            <button type="submit" class="btn btn-primary mb-3">Add Task</button>
+            <button type="submit" class="btn btn-primary mb-3 " name="taskSubmit" id="taskSubmit">Add Task</button>
         </div>
     </form>
 
     <div class="row">
         <div class="col-md-12">
-            <table class="table" id="tasks-table">
+            <table class="table table-hover" id="tasks-table">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Task Title</th>
                 </tr>
                 </thead>
-                <tbody id="table-tbody">
+                <tbody id="table-tbody" >
                 </tbody>
             </table>
         </div>
@@ -71,5 +71,6 @@
 </div>
 
 <script src="./bundle.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
 </body>
 </html>

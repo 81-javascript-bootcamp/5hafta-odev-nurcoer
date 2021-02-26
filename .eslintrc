@@ -5,6 +5,8 @@
   "rules": {
     "prefer-destructuring": ["error", {"object": true, "array": true}],
     "no-var": ["error"],
-    "prettier/prettier": ["error"]
+    "prettier/prettier": ["error", {
+     "endOfLine":"auto"
+   }]
   }
 }
