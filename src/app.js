@@ -39,7 +39,7 @@ class PomodoroApp {
   //add task to table
   addTaskToTable(task) {
     const $newTaskEl = document.createElement('tr');
-    $newTaskEl.innerHTML = `<th scope="row">${task.id}</th><td>${task.title}</td> 
+    $newTaskEl.innerHTML = `<th scope="row"></th><td>${task.title}</td> 
     <td><a class="button cross" name= "removeButton" id= ${task.id} title="${task.title}" ></a></td>`;
     $newTaskEl.id = `task${task.id}`;
     this.$tableTbody.appendChild($newTaskEl);
