@@ -10,10 +10,11 @@ class PomodoroApp {
     this.$taskFormInput = this.$taskForm.querySelector('input');
     this.$removeButtons;
   }
+
   //add remove task with data.js (added)
   removeTask(task) {
     addOrRemoveTaskToApi(task).then(() => {
-      alertify.error(`${task.id} id'li task silinmiştir.`).dismissOthers();
+      alertify.error(`${task.title} task deleted.`).dismissOthers();
       this.removeTaskToTable(task);
     });
   }
@@ -22,10 +23,11 @@ class PomodoroApp {
     addOrRemoveTaskToApi(task)
       .then((newTask) => {
         this.addTaskToTable(newTask);
-        alertify.success(`${newTask.title}   eklenmiştir.`).dismissOthers();
+        alertify.success(`${newTask.title}   task added.`).dismissOthers();
       })
       .then((newTask) => {
         disableButton(false);
+        this.getRemoveButton();
       });
   }
   // remove task from table(added)
@@ -38,7 +40,7 @@ class PomodoroApp {
   addTaskToTable(task) {
     const $newTaskEl = document.createElement('tr');
     $newTaskEl.innerHTML = `<th scope="row">${task.id}</th><td>${task.title}</td> 
-    <td><a class="button cross" name= "removeButton" id= ${task.id}></a></td>`;
+    <td><a class="button cross" name= "removeButton" id= ${task.id} title="${task.title}" ></a></td>`;
     $newTaskEl.id = `task${task.id}`;
     this.$tableTbody.appendChild($newTaskEl);
     this.$taskFormInput.value = '';
@@ -57,12 +59,18 @@ class PomodoroApp {
       }
     });
   }
+
+  getRemoveButton() {
+    this.$removeButtons = document.querySelectorAll(`a[name="removeButton"]`);
+    this.handleRemoveTask();
+  }
   //garbage button handler is captured(added)
   handleRemoveTask() {
     for (let i = 0; i < this.$removeButtons.length; i++) {
       this.$removeButtons[i].addEventListener('click', (e) => {
         e.preventDefault();
-        const task = { id: e.target.id };
+        const task = { id: e.target.id, title: e.target.title };
+        console.log(e.target.title);
         this.removeTask(task);
       });
     }
@@ -77,10 +85,7 @@ class PomodoroApp {
         });
       })
       .then(() => {
-        this.$removeButtons = document.querySelectorAll(
-          `a[name="removeButton"]`
-        );
-        this.handleRemoveTask();
+        this.getRemoveButton();
       });
   }
 
