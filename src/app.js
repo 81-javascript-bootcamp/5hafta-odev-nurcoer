@@ -59,7 +59,7 @@ class PomodoroApp {
       }
     });
   }
-
+  //get remove buttons(added)
   getRemoveButton() {
     this.$removeButtons = document.querySelectorAll(`a[name="removeButton"]`);
     this.handleRemoveTask();
