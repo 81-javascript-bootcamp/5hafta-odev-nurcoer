@@ -14,8 +14,13 @@ class PomodoroApp {
   //add remove task with data.js (added)
   removeTask(task) {
     addOrRemoveTaskToApi(task).then(() => {
+<<<<<<< HEAD
       alertify.error(`${task.title} task deleted.`).dismissOthers();
       this.removeTaskToTable(task);
+=======
+      alertify.error(`${task.title} task deleted`).dismissOthers();
+      this.removeTaskFromTable(task);
+>>>>>>> 3f5415807348487face80d7af05f845d3fa5f6f9
     });
   }
   // add then and alertify(changed)
@@ -23,7 +28,11 @@ class PomodoroApp {
     addOrRemoveTaskToApi(task)
       .then((newTask) => {
         this.addTaskToTable(newTask);
+<<<<<<< HEAD
         alertify.success(`${newTask.title}   task added.`).dismissOthers();
+=======
+        alertify.success(`${newTask.title} task added.`).dismissOthers();
+>>>>>>> 3f5415807348487face80d7af05f845d3fa5f6f9
       })
       .then((newTask) => {
         disableButton(false);
@@ -31,7 +40,7 @@ class PomodoroApp {
       });
   }
   // remove task from table(added)
-  removeTaskToTable(task) {
+  removeTaskFromTable(task) {
     let $removedTask = this.$tableTbody.querySelector(`#task${task.id}`);
     this.$tableTbody.removeChild($removedTask);
   }
@@ -39,8 +48,13 @@ class PomodoroApp {
   //add task to table
   addTaskToTable(task) {
     const $newTaskEl = document.createElement('tr');
+<<<<<<< HEAD
     $newTaskEl.innerHTML = `<th scope="row">${task.id}</th><td>${task.title}</td> 
     <td><a class="button cross" name= "removeButton" id= ${task.id} title="${task.title}" ></a></td>`;
+=======
+    $newTaskEl.innerHTML = `<th scope="row"></th><td>${task.title}</td> 
+    <td><a class="button cross" name="removeButton" id= ${task.id} title="${task.title}"></a></td>`;
+>>>>>>> 3f5415807348487face80d7af05f845d3fa5f6f9
     $newTaskEl.id = `task${task.id}`;
     this.$tableTbody.appendChild($newTaskEl);
     this.$taskFormInput.value = '';
@@ -55,7 +69,7 @@ class PomodoroApp {
         this.addTask(task);
         disableButton(true);
       } else {
-        alertify.error('Task title alanını doldurunuz.').dismissOthers();
+        alertify.error('task title cannot be blank.').dismissOthers();
       }
     });
   }
@@ -70,7 +84,10 @@ class PomodoroApp {
       this.$removeButtons[i].addEventListener('click', (e) => {
         e.preventDefault();
         const task = { id: e.target.id, title: e.target.title };
+<<<<<<< HEAD
         console.log(e.target.title);
+=======
+>>>>>>> 3f5415807348487face80d7af05f845d3fa5f6f9
         this.removeTask(task);
       });
     }

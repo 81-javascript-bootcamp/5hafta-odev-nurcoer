@@ -92,4 +92,14 @@
   }
 
   
+.ftable tr:not(.fble_htr) {
+    counter-increment: rowNumber;
+}
+
+.ftable tr:not(.fble_htr) th:first-child::before {
+    content: counter(rowNumber);
+    min-width: 1em;
+    margin-right: 0.5em;
+}
+  
   
