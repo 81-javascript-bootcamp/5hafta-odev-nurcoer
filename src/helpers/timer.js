@@ -28,6 +28,3 @@ export const createTimer = ({
 export const timerContext = ($timerEl, context) => {
   $timerEl.innerHTML = context;
 };
-export const reserInterval = (endInterval) => {
-  clearInterval(endInterval);
-};
