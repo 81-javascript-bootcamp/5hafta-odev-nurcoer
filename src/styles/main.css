@@ -29,6 +29,17 @@
 }
 
 
+tr.active {
+    background: #506350;
+    color: #fff;
+}
+
+tr.completed {
+    text-decoration: line-through;
+    background: gray;
+}
+
+
 .button{
     background-image: -webkit-linear-gradient(top, #f4f1ee, #fff);
     background-image: linear-gradient(top, #f4f1ee, #fff);
