@@ -210,13 +210,14 @@ class PomodoroApp {
 
   handleReset() {
     //Reset butonuna popup ekle
-    //after4 task breakTime(longBreakTime)
     //update task function
     //sınav tarihi ve saati girişi yap geri sayım yap
     //chill zamanında spotify random müzik çalsın.
 
     //günlük çalışma planı oluşturmayı sağla günlük çalışmaları, listenebilsin eski çalışmalarını ve konularını görebilsin
     //hergün ders başlma saati ayarlasın ve o saatte bildirim alsın siteden.
+    this.closeResetPopup();
+    this.showResetPopup();
     this.$resetBtn.addEventListener('click', (e) => {
       timerContext(this.$timerEl, 'Start');
       this.data.forEach((data) => {
@@ -227,6 +228,20 @@ class PomodoroApp {
       this.resetTasks();
       this.currentRemaining = null;
       this.runningTaskCounter = null;
+    });
+  }
+
+  showResetPopup() {
+    this.$resetBtn.addEventListener('mouseover', () => {
+      let resetPopup = document.getElementById('resetPopup');
+      resetPopup.classList.toggle('show');
+    });
+  }
+
+  closeResetPopup() {
+    this.$resetBtn.addEventListener('mouseout', () => {
+      let resetPopup = document.getElementById('resetPopup');
+      resetPopup.classList.remove('show');
     });
   }
 
