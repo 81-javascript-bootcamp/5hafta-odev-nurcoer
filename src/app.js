@@ -1,7 +1,11 @@
 import alertify from 'alertifyjs';
 import { createTimer, timerContext } from './helpers/timer';
 import { disableButton } from './helpers/button';
-import { POMODORO_WORK_TIME, POMODORO_BREAK_TIME } from './constans';
+import {
+  POMODORO_WORK_TIME,
+  POMODORO_BREAK_TIME,
+  POMODORO_LONG_BREAK_TIME,
+} from './constans';
 import { getNow, addMinutesToDate, getRemainingDate } from './helpers/date';
 import {
   getDataFromApi,
@@ -24,11 +28,12 @@ class PomodoroApp {
     this.currentInterval = null;
     this.breakInterval = null;
     this.currentRemaining = null;
+    this.breakRemaining = null;
     this.currentTask = null;
-    this.$removeButtons;
+    this.runningTaskCounter = null;
     this.$tableTbody = document.querySelector(tableTbodySelector);
     this.$taskForm = document.querySelector(taskFormSelector);
-    this.$taskFormInput = this.$taskForm.querySelector('input');
+    this.$taskFormInput = document.querySelector('input');
     this.$startBtn = document.querySelector(startBtnSelector);
     this.$pauseBtn = document.querySelector(pauseBtnSelector);
     this.$timerEl = document.querySelector(timerElSelector);
@@ -51,7 +56,6 @@ class PomodoroApp {
       })
       .then((newTask) => {
         disableButton(false);
-        this.getRemoveButton();
       });
   }
 
@@ -65,8 +69,9 @@ class PomodoroApp {
   addTaskToTable(task) {
     const $newTaskEl = document.createElement('tr');
     $newTaskEl.innerHTML = `<th scope="row"></th><td>${task.title}</td> 
-    <td><a class="button cross" name= "removeButton" id= ${task.id} title="${task.title}" ></a></td>`;
+    <td><a class="button cross" id= ${task.id} title="${task.title}" ></a></td>`;
     $newTaskEl.setAttribute('data-taskId', `task${task.id}`);
+    $newTaskEl.setAttribute('taskRow', `taskRow`);
     if (task.completed) {
       $newTaskEl.classList.add('completed');
     }
@@ -87,19 +92,13 @@ class PomodoroApp {
     });
   }
 
-  getRemoveButton() {
-    this.$removeButtons = document.querySelectorAll(`a[name="removeButton"]`);
-    this.handleRemoveTask();
-  }
-
   handleRemoveTask() {
-    for (let i = 0; i < this.$removeButtons.length; i++) {
-      this.$removeButtons[i].addEventListener('click', (e) => {
-        e.preventDefault();
+    this.$tableTbody.addEventListener('click', (e) => {
+      if (e.target.classList.contains('cross')) {
         const task = { id: e.target.id, title: e.target.title };
         this.removeTask(task);
-      });
-    }
+      }
+    });
   }
 
   fillTasksTable() {
@@ -111,21 +110,19 @@ class PomodoroApp {
         });
       })
       .then(() => {
-        this.getRemoveButton();
+        this.handleRemoveTask();
       });
   }
 
-  initializeBreakTimer(deadline) {
+  initializeBreakTimer(deadline, context) {
     createTimer({
       context: this,
       intervalVariable: 'breakInterval',
       deadline: deadline,
-      timerElContent: 'Chill: ',
+      timerElContent: `${context}:`,
+      currentRemaining: `breakRemaining`,
       onStop: () => {
-        completeTaskOnApi(this.currentTask).then(() => {
-          this.currentTask.completed = true;
-          this.setActiveTask();
-        });
+        this.setActiveTask();
       },
     });
   }
@@ -137,12 +134,27 @@ class PomodoroApp {
       deadline,
       timerElContent: "You're working: ",
       onStop: () => {
-        const now = getNow();
-        const breakDeadline = addMinutesToDate(now, POMODORO_BREAK_TIME);
-        this.initializeBreakTimer(breakDeadline);
+        completeTaskOnApi(this.currentTask).then(() => {
+          this.currentTask.completed = true;
+          this.handleBreakTime();
+          this.handlePreviousTask();
+        });
       },
       currentRemaining: 'currentRemaining',
     });
+  }
+
+  handleBreakTime() {
+    const now = getNow();
+    this.runningTaskCounter += 1;
+    console.log(this.runningTaskCounter);
+    if (this.runningTaskCounter % 4 === 0) {
+      const longBreakDeadLine = addMinutesToDate(now, POMODORO_LONG_BREAK_TIME);
+      this.initializeBreakTimer(longBreakDeadLine, 'Long Chill');
+    } else {
+      const breakDeadline = addMinutesToDate(now, POMODORO_BREAK_TIME);
+      this.initializeBreakTimer(breakDeadline, `Chill`);
+    }
   }
 
   handlePreviousTask() {
@@ -168,7 +180,6 @@ class PomodoroApp {
   }
 
   setActiveTask() {
-    this.handlePreviousTask();
     this.currentTask = this.data.find((task) => !task.completed);
     if (this.currentTask) {
       this.startTask();
@@ -189,7 +200,6 @@ class PomodoroApp {
 
   handleStart() {
     this.$startBtn.addEventListener('click', () => {
-      // check if continues to current task or start a new task.
       if (this.currentRemaining) {
         this.continueTask();
       } else {
@@ -199,6 +209,14 @@ class PomodoroApp {
   }
 
   handleReset() {
+    //Reset butonuna popup ekle
+    //after4 task breakTime(longBreakTime)
+    //update task function
+    //sınav tarihi ve saati girişi yap geri sayım yap
+    //chill zamanında spotify random müzik çalsın.
+
+    //günlük çalışma planı oluşturmayı sağla günlük çalışmaları, listenebilsin eski çalışmalarını ve konularını görebilsin
+    //hergün ders başlma saati ayarlasın ve o saatte bildirim alsın siteden.
     this.$resetBtn.addEventListener('click', (e) => {
       timerContext(this.$timerEl, 'Start');
       this.data.forEach((data) => {
@@ -208,6 +226,7 @@ class PomodoroApp {
       this.resetInterval();
       this.resetTasks();
       this.currentRemaining = null;
+      this.runningTaskCounter = null;
     });
   }
 
@@ -228,7 +247,7 @@ class PomodoroApp {
 
   handlePause() {
     this.$pauseBtn.addEventListener('click', () => {
-      this.resetInterval();
+      clearInterval(this.currentInterval);
     });
   }
 
